@@ -5,15 +5,6 @@ import matplotlib.pyplot as plt
 import sklearn as sk
 from sklearn.preprocessing import StandardScaler
 
-
-""" ----------------------------- DATA CLEANING ----------------------------- """ 
-# Load data
-df = pd.read_csv("Data/lung_disease_data.csv")
-
-df.info()
-df.describe()
-
-""" ----------------------------- WEB APP ----------------------------- """
 # Initialize web app
 st.set_page_config(
     page_title="Lung Disease Data Visualization",
@@ -22,11 +13,26 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
+### ----------------------------- DATA CLEANING ----------------------------- 
+# Load data
+df = pd.read_csv("Data/lung_disease_data.csv")
+
+df.info()
+df.describe()
+
+### ----------------------------- WEB APP ----------------------------- 
 # Title
 st.title("Lung Disease Data Visualization")
 
-# Sidebar
+# Raw data 
+st.subheader("Raw Data")
+st.write(df)
 
+# Data Visualization
 
-# Data
+#### Distribution of Age
+st.subheader("Distribution of Age")
+age_distribution = df["Age"].value_counts()
+st.write(age_distribution)
+
 
