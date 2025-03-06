@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+from matplotlib.colors import LinearSegmentedColormap
 
 # Cấu hình trang
 st.set_page_config(page_title="Phân Tích Bệnh Phổi", page_icon="🫁", layout="wide")
@@ -83,6 +84,30 @@ def plot_smoking_impact(df, chart_type='stacked'):
         plt.tight_layout()
         return plt
 
+def plot_surgery_correlation(df):
+    # Chuyển đổi cột Phục Hồi và Loại Điều Trị thành số
+    df_encoded = df.copy()
+    df_encoded['Phục Hồi'] = df_encoded['Phục Hồi'].map({'Có': 1, 'Không': 0})
+    df_encoded['Loại Điều Trị'] = df_encoded['Loại Điều Trị'].map({'Phẫu Thuật': 2, 'Thuốc': 1, 'Liệu Pháp': 0})
+    df_encoded['Giới Tính'] = df_encoded['Giới Tính'].map({'Nam': 1, 'Nữ': 0})
+    df_encoded['Tình Trạng Hút Thuốc'] = df_encoded['Tình Trạng Hút Thuốc'].map({'Có': 1, 'Không': 0})
+
+    # Tính toán ma trận tương quan với "Phục Hồi" làm trọng tâm
+    correlation_matrix = df_encoded[['Tuổi', 'Giới Tính', 'Tình Trạng Hút Thuốc', 'Dung Lượng Phổi', 
+                                   'Số Lần Khám', 'Loại Điều Trị', 'Phục Hồi']].corr()
+
+    # Tạo colormap tùy chỉnh từ xanh dương (#1F77B4) đến đỏ (#D62728)
+    colors = ['#1F77B4', '#D62728']  # Xanh dương đến đỏ
+    custom_cmap = LinearSegmentedColormap.from_list('custom_blue_to_red', colors, N=256)
+
+    # Tạo heatmap
+    plt.figure(figsize=(10, 8))
+    sns.heatmap(correlation_matrix, annot=True, cmap=custom_cmap, vmin=-1, vmax=1, center=0,
+                square=True, fmt='.2f', cbar_kws={'shrink': .5})
+    plt.title('Các yếu tố ảnh hưởng đến khả năng phục hồi', fontsize=14, pad=15)
+    plt.tight_layout()
+    return plt
+
 # Hàm chính
 def main():
     st.title('Phân tích dữ liệu bệnh phổi')
@@ -99,7 +124,7 @@ def main():
     
     # Tùy chọn cho biểu đồ 
     chart_type_1 = st.sidebar.selectbox('Chọn loại biểu đồ cho "Tỷ lệ phục hồi theo loại bệnh:', 
-                                       chart_options_2, index=0)
+                                       chart_options_1, index=0)
     chart_type_2 = st.sidebar.selectbox('Chọn loại biểu đồ cho "Ảnh hưởng của hút thuốc":', 
                                        chart_options_2, index=0)
     
@@ -128,6 +153,19 @@ def main():
     fig2 = plot_smoking_impact(df, chart_type_2)
     if fig2:
         st.pyplot(fig2)
+        
+    # Thêm khoảng cách
+    st.markdown("---")
+    
+    # Câu hỏi 3: Mối tương quan của phương pháp "Phẫu thuật"
+    st.subheader('Câu hỏi 3: Các yếu tố ảnh hưởng đến khả năng phục hồi')
+    st.write("""
+    Phân tích này kiểm tra mối tương quan giữa khả năng phục hồi và các yếu tố như tuổi, giới tính,
+    hút thuốc, dung lượng phổi, số lần khám, và loại điều trị (bao gồm Phẫu Thuật).
+    """)
+    fig3 = plot_surgery_correlation(df)
+    if fig3:
+        st.pyplot(fig3)
     
     # Thống kê cơ bản
     st.subheader('Thống kê cơ bản')
