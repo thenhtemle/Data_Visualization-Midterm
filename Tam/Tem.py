@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-import numpy as np  # Import numpy
+import numpy as np
 
 # Set color palette for colorblind-friendly visuals
 sns.set_palette("colorblind")
@@ -123,7 +123,7 @@ elif st.session_state["page"] == "🚬 Hút Thuốc & Dung Tích Phổi":
         - **Kết hợp với Boxplot:**  Kết hợp thông tin từ biểu đồ phân tán và biểu đồ hộp để có cái nhìn toàn diện hơn.
         """)
 
-    # T-test (using numpy)
+    # T-test (fully manual, no scipy)
     smokers = df[df["Smoking Status_yes"] == 1]["Lung Capacity"]
     non_smokers = df[df["Smoking Status_yes"] == 0]["Lung Capacity"]
 
@@ -131,7 +131,7 @@ elif st.session_state["page"] == "🚬 Hút Thuốc & Dung Tích Phổi":
         # Calculate t-statistic and p-value manually
         mean_smokers = np.mean(smokers)
         mean_non_smokers = np.mean(non_smokers)
-        std_smokers = np.std(smokers, ddof=1)  # Use ddof=1 for sample standard deviation
+        std_smokers = np.std(smokers, ddof=1)  # Sample standard deviation
         std_non_smokers = np.std(non_smokers, ddof=1)
         n_smokers = len(smokers)
         n_non_smokers = len(non_smokers)
@@ -145,10 +145,22 @@ elif st.session_state["page"] == "🚬 Hút Thuốc & Dung Tích Phổi":
         # Degrees of freedom
         df_ttest = n_smokers + n_non_smokers - 2
 
-        # Calculate p-value (two-tailed) using the t-distribution's cumulative distribution function (CDF)
-        # We'll approximate it using a normal distribution for simplicity (valid for large sample sizes)
-        from scipy.stats import norm  #  Import the norm function *here*
-        p_value = 2 * (1 - norm.cdf(abs(t_stat)))
+        # Approximate p-value (two-tailed) using the standard normal CDF
+        #  We'll use an approximation based on the Z-distribution (standard normal)
+        #  This is valid for larger sample sizes due to the Central Limit Theorem.
+        def z_to_p(z):
+            """Approximates the two-tailed p-value from a Z-score."""
+            # Use a lookup table (or an approximation function) for the standard normal CDF.
+            # For simplicity, we use a simplified approximation.  A more accurate
+            # approach would use a more precise approximation or a lookup table.
+            z = abs(z)  # Ensure z is positive
+            if z > 3.7:  # Beyond this, p is very small
+                return 0.0
+            # Very simplified approximation (good enough for demonstration)
+            p = 1 / (1 + np.exp(0.07056 * z**3 + 1.5976 * z))
+            return 2 * (1 - p)  # Two-tailed p-value
+
+        p_value = z_to_p(t_stat)
 
 
         st.write(f"Kiểm định t-test: t-statistic = {t_stat:.2f}, p-value = {p_value:.3f}")
@@ -163,8 +175,6 @@ elif st.session_state["page"] == "🚬 Hút Thuốc & Dung Tích Phổi":
               """)
     else:
         st.write("Không thể thực hiện kiểm định t-test: Một hoặc cả hai nhóm (người hút thuốc/không hút thuốc) không có dữ liệu.")
-
-
 
 elif st.session_state["page"] == "🏥 Lượt Khám Bệnh":
     st.subheader("🏥 Lượt Khám Bệnh Trung Bình theo Loại Bệnh")
