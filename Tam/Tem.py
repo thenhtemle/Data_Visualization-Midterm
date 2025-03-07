@@ -325,7 +325,7 @@ elif page == "3. Phân Tích Chuyên Sâu":
                 """)
       else:
           st.write("Vui lòng chọn ít nhất một loại bệnh.")
-          
+        
     elif analysis_page == "Tương Quan":
         st.subheader("Biểu Đồ Tương Quan (Heatmap)")
 
@@ -347,18 +347,57 @@ elif page == "3. Phân Tích Chuyên Sâu":
 
 # --- Page 4: Overall Conclusions ---
 elif page == "4. Nhận Xét Chung":
+    avg_age = df["Age"].mean()
+    smoking_rate = df["Smoking Status_yes"].mean() * 100
+    avg_hospital_visits = df["Hospital Visits"].mean()
+    male_percentage = df["Gender_male"].mean() * 100
+    female_percentage = df["Gender_female"].mean() * 100
+    
     st.header("4. Nhận Xét Chung")
 
-    st.markdown("""
-    - **(Viết nhận xét tổng quan về dữ liệu và các kết quả phân tích)**
-    - Ví dụ:
-        - Dữ liệu cho thấy mối tương quan đáng kể giữa hút thuốc và dung tích phổi.
-        - Bệnh [Tên bệnh] là loại bệnh phổi phổ biến nhất trong tập dữ liệu.
-        - Tuổi trung bình của bệnh nhân là [Tuổi trung bình], và có sự khác biệt về dung tích phổi giữa các nhóm tuổi.
-        - Cần có thêm nghiên cứu để xác định nguyên nhân và các yếu tố nguy cơ của các bệnh phổi này.
+    st.markdown(f"""
+    - **Tổng Quan về Dữ Liệu và Kết Quả Phân Tích:**
+        - **Mối Tương Quan giữa Hút Thuốc và Dung Tích Phổi:**
+            - Dữ liệu cho thấy mối tương quan đáng kể giữa hút thuốc và dung tích phổi. Cụ thể, những **bệnh nhân hút thuốc** có xu hướng có **dung tích phổi thấp hơn** so với những bệnh nhân không hút thuốc.
+            - Điều này có thể được giải thích bởi tác động tiêu cực của khói thuốc lá lên hệ hô hấp, gây ra các bệnh lý như viêm phế quản mãn tính và COPD.
+        - **Phổ Biến của Bệnh Bronchitis:**
+            - Bệnh **Bronchitis (Viêm phế quản)** là loại bệnh phổi **phổ biến nhất** trong tập dữ liệu. Điều này có thể phản ánh tình trạng ô nhiễm không khí hoặc thói quen hút thuốc lá phổ biến trong cộng đồng.
+        - **Tuổi Trung Bình của Bệnh Nhân:**
+            - Tuổi trung bình của bệnh nhân là **{avg_age:.2f} tuổi**, và có sự khác biệt về dung tích phổi giữa các nhóm tuổi. Nhóm tuổi lớn hơn có xu hướng có dung tích phổi thấp hơn, có thể do sự suy giảm chức năng phổi theo tuổi tác.
+        - **Tình Trạng Hút Thuốc:**
+            - Tỷ lệ bệnh nhân hút thuốc trong tập dữ liệu là **{smoking_rate:.2f}%**. Điều này có thể cho thấy mức độ phổ biến của thói quen hút thuốc trong cộng đồng bệnh nhân.
+        - **Số Lượt Khám Bệnh:**
+            - Số lượt khám bệnh trung bình của bệnh nhân là **{avg_hospital_visits:.2f}**. Điều này có thể phản ánh mức độ nghiêm trọng của bệnh và nhu cầu chăm sóc y tế của bệnh nhân.
+        - **Giới Tính:**
+            - Tỷ lệ bệnh nhân nam và nữ trong tập dữ liệu là **{male_percentage:.2f}%** và **{female_percentage:.2f}%**. Điều này có thể cho thấy sự phân bố giới tính trong cộng đồng bệnh nhân.
+            Trong những năm gần đây, tỷ lệ hút thuốc ở nữ giới có xu hướng tăng lên, điều này có thể dẫn đến sự gia tăng các bệnh lý liên quan đến phổi ở nữ giới. Ngoài ra các nghiên cứu cũng
+            chỉ ra rằng nữ giới có thể nhạy cảm hơn với các tác động tiêu cực của khói thuốc lá so với nam giới, dẫn đến nguy cơ cao hơn mắc các bệnh phổi.
+        - **Nhu Cầu Nghiên Cứu Thêm:**
+            - Cần có thêm nghiên cứu để xác định nguyên nhân và các yếu tố nguy cơ của các bệnh phổi này. Điều này bao gồm việc xem xét các yếu tố môi trường, di truyền và lối sống khác có thể ảnh hưởng đến sức khỏe phổi.
     """)
+    
     st.subheader("Hạn Chế")
     st.markdown("""
-      - **(Thảo luận về những hạn chế của dữ liệu và phân tích)**
-        - Ví dụ: Kích thước mẫu có thể không đủ lớn, dữ liệu có thể bị thiếu sót, các biến chưa đầy đủ, v.v
+      - **Hạn Chế của Dữ Liệu và Phân Tích:**
+        - **Kích Thước Mẫu:**
+            - Kích thước mẫu có thể không đủ lớn để đưa ra kết luận chắc chắn. Một mẫu lớn hơn sẽ cung cấp kết quả đáng tin cậy hơn và giảm thiểu sai số thống kê.
+        - **Thiếu Sót Dữ Liệu:**
+            - Dữ liệu có thể bị thiếu sót hoặc không đầy đủ, ảnh hưởng đến độ chính xác của phân tích. Ví dụ, một số bệnh nhân có thể không cung cấp đầy đủ thông tin về tình trạng hút thuốc hoặc dung tích phổi.
+        - **Biến Quan Trọng Chưa Được Thu Thập:**
+            - Một số biến quan trọng có thể chưa được thu thập hoặc xem xét trong phân tích. Các yếu tố như chế độ ăn uống, môi trường sống, và tiền sử bệnh lý gia đình có thể ảnh hưởng đến sức khỏe phổi nhưng không có trong dữ liệu.
+        - **Tương Quan Không Đồng Nghĩa với Nhân Quả:**
+            - Tương quan không đồng nghĩa với nhân quả; cần có thêm nghiên cứu để xác định mối quan hệ nhân quả. Ví dụ, mặc dù có mối tương quan giữa hút thuốc và dung tích phổi, không thể kết luận rằng hút thuốc là nguyên nhân duy nhất gây ra giảm dung tích phổi.
+    """)
+
+    st.subheader("Đề Xuất Nghiên Cứu Tiếp Theo")
+    st.markdown("""
+      - **Đề Xuất cho Nghiên Cứu Tiếp Theo:**
+        - **Thu Thập Thêm Dữ Liệu:**
+            - Thu thập thêm dữ liệu để tăng kích thước mẫu và độ tin cậy của kết quả. Điều này bao gồm việc mở rộng phạm vi nghiên cứu để bao gồm nhiều bệnh nhân hơn từ các khu vực địa lý khác nhau.
+        - **Bổ Sung Các Biến Quan Trọng:**
+            - Bổ sung các biến quan trọng khác có thể ảnh hưởng đến bệnh phổi, như chế độ ăn uống, môi trường sống, v.v. Điều này sẽ giúp hiểu rõ hơn về các yếu tố nguy cơ và bảo vệ sức khỏe phổi.
+        - **Nghiên Cứu Sâu Hơn về Mối Quan Hệ Nhân Quả:**
+            - Thực hiện các nghiên cứu sâu hơn để xác định mối quan hệ nhân quả giữa các yếu tố nguy cơ và bệnh phổi. Sử dụng các phương pháp nghiên cứu như thử nghiệm lâm sàng hoặc nghiên cứu theo dõi dài hạn để xác định nguyên nhân chính xác.
+        - **Sử Dụng Các Phương Pháp Phân Tích Tiên Tiến:**
+            - Sử dụng các phương pháp phân tích tiên tiến hơn để khám phá các mối quan hệ phức tạp trong dữ liệu. Các phương pháp như phân tích đa biến, mô hình học máy, và phân tích mạng có thể giúp phát hiện các mối quan hệ ẩn và dự đoán nguy cơ bệnh phổi.
     """)
