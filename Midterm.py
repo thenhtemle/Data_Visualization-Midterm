@@ -172,7 +172,7 @@ if page == "1. Giới Thiệu Dữ Liệu":
     st.header("1. Giới Thiệu Dữ Liệu")
     st.subheader("Nguồn Gốc Dữ Liệu")
     st.markdown("""
-    - Dữ liệu được cung cấp bởi người dùng thông qua tệp CSV.
+    - Dữ liệu được lấy từ nền tảng Kaggle: [Lung Disease Prediction](https://www.kaggle.com/datasets/samikshadalvi/lungs-diseases-dataset).
     - Tập dữ liệu bao gồm thông tin về bệnh nhân mắc các bệnh phổi như hen suyễn, viêm phế quản, COPD, ung thư phổi, và viêm phổi.
     - Dữ liệu bao gồm các thông tin nhân khẩu học, tình trạng hút thuốc, dung tích phổi, số lượt khám bệnh, và kết quả hồi phục.
     """)
@@ -189,7 +189,7 @@ if page == "1. Giới Thiệu Dữ Liệu":
     - **✅Recovered:** Bệnh nhân đã hồi phục chưa? (0: No, 1: Yes).
     """)
 
-    with st.expander("Xem Toàn Bộ Dữ Liệu Thô"):
+    with st.expander("Xem Toàn Bộ Dữ Liệu Thô (đã dịch sang tiếng Việt)"):
         st.dataframe(df)
 
 # --- Trang 2: Thống Kê Mô Tả ---
@@ -240,9 +240,7 @@ elif page == "3. Phân Tích Chuyên Sâu":
         "Lượt Khám Bệnh", 
         "Tương Quan",
         "Phân Tích Song Biến (Bivariate Analysis)",
-        "Tỷ Lệ Hồi Phục",
-        "Tỷ lệ phục hồi theo loại bệnh",
-        "Ảnh hưởng của hút thuốc tới khả năng phục hồi"
+        "Tỷ lệ hồi phục"
     ])
     
     # Thống kê chung
@@ -277,18 +275,6 @@ elif page == "3. Phân Tích Chuyên Sâu":
                 - Phần trăm bệnh nhân hút thuốc, một yếu tố nguy cơ quan trọng đối với bệnh phổi.
             """)
     
-    elif analysis_page == "Ảnh hưởng của hút thuốc tới khả năng phục hồi":
-        st.subheader('Ảnh hưởng của hút thuốc đến khả năng phục hồi')
-        st.write("""
-                    Phân tích này xem xét mối quan hệ giữa tình trạng hút thuốc và khả năng phục hồi.
-                    """)
-        st.sidebar.header('Tùy chỉnh biểu đồ')
-        chart_options_2 = ['Stacked', 'Pie']
-        chart_type_1 = st.sidebar.selectbox('Ảnh hưởng của hút thuốc tới khả năng phục hồi', 
-                                       chart_options_2, index=0)
-        fig2 = plot_smoking_impact(df, chart_type_1)
-        if fig2:
-            st.pyplot(fig2)
     # Phân bố Tuổi & Dung Tích Phổi
     elif analysis_page == "Tuổi & Dung Tích Phổi":
         st.subheader("Phân Bố Tuổi & Dung Tích Phổi")
@@ -429,23 +415,6 @@ elif page == "3. Phân Tích Chuyên Sâu":
                 """)
         else:
             st.write("Không thể thực hiện kiểm định t-test: Một hoặc cả hai nhóm không có dữ liệu.")
-    
-    elif analysis_page == "Tỷ lệ phục hồi theo loại bệnh":
-        st.subheader("Tỷ lệ phần trăm phục hồi theo loại bệnh")
-        # Sidebar để tùy chỉnh
-        st.sidebar.header('Tùy chỉnh biểu đồ')
-        chart_options_1 = ['Stacked', 'Pie']
-        # Tùy chọn cho biểu đồ 
-        chart_type_1 = st.sidebar.selectbox('Chọn loại biểu đồ cho "Tỷ lệ phục hồi theo loại bệnh:', 
-                                       chart_options_1, index=0)
-        st.subheader('Tỷ lệ phục hồi theo loại bệnh')
-        st.write("""
-           Phân tích này giúp chúng ta hiểu loại bệnh nào có khả năng phục hồi cao hơn,
-           từ đó đưa ra chiến lược điều trị phù hợp.
-            """)
-        fig1 = plot_recovery_by_disease(df, chart_type_1)
-        if fig1:
-           st.pyplot(fig1)
 
     # Lượt Khám Bệnh
     elif analysis_page == "Lượt Khám Bệnh":
@@ -500,26 +469,32 @@ elif page == "3. Phân Tích Chuyên Sâu":
         num_col = df.select_dtypes(include=['int64', 'float64']).columns.tolist()
         feature_x = st.selectbox("Chọn biến X:", num_col)
         feature_y = st.selectbox("Chọn biến Y:", num_col)
-        plot_type = st.radio("Loại biểu đồ:", ["Scatter", "Hexbin", "2D KDE"])
+        plot_type = st.radio("Loại biểu đồ:", ["Scatter", "2D KDE"])
 
         if feature_x != feature_y:
             fig, ax = plt.subplots(figsize=(10, 6))
             if plot_type == "Scatter":
                 sns.scatterplot(x=df[feature_x], y=df[feature_y], hue=df["Hồi Phục"], palette=PALETTE[:2], ax=ax)
-            elif plot_type == "Hexbin":
-                hb = ax.hexbin(df[feature_x], df[feature_y], gridsize=30, cmap="Blues", mincnt=1)
-                fig.colorbar(hb, ax=ax, label="Số lượng")
             elif plot_type == "2D KDE":
                 sns.kdeplot(x=df[feature_x], y=df[feature_y], cmap="Blues", fill=True, ax=ax)
             ax.set_title(f"{feature_x} vs {feature_y} ({plot_type})")
             st.pyplot(fig)
         else:
             st.warning("Vui lòng chọn hai biến khác nhau cho trục X và Y.")
+            
+        with st.expander("Một số nhận xét về các tổ hợp song biến"):    
+            st.markdown("""
+            1. **Mối Quan Hệ giữa Dung Tích Phổi và Tuổi:** Khi tuổi tăng, dung tích phổi có xu hướng giảm.
+            2. **Tương Quan giữa Hút Thuốc và Dung Tích Phổi:** Những người hút thuốc có xu hướng có dung tích phổi thấp hơn.
+            3. **Tỷ Lệ Hồi Phục và Số Lượt Khám Bệnh:** Theo dõi y tế tốt hơn giúp tăng cơ hội phục hồi.
+            4. **Tác Động của Loại Bệnh lên Hồi Phục:** Bệnh mãn tính có tỷ lệ hồi phục thấp hơn.
+            5. **Ảnh Hưởng của Loại Điều Trị:** Phẫu thuật hoặc liệu pháp có xu hướng có tương quan tích cực với hồi phục.
+            """)
 
-    elif analysis_page == "Tỷ Lệ Hồi Phục":   
+    elif analysis_page == "Tỷ lệ hồi phục":   
         # Tỷ lệ hồi phục (sử dụng dữ liệu gốc)
-        st.subheader("Phân Tích Tỷ Lệ Hồi Phục")
-        factor = st.selectbox("Chọn yếu tố để so sánh tỷ lệ hồi phục:", 
+        st.subheader("Phân Tích Tỷ lệ hồi phục")
+        factor = st.selectbox("Chọn yếu tố để so sánh Tỷ lệ hồi phục:", 
                             ["Tình Trạng Hút Thuốc", "Loại Bệnh", "Loại Điều Trị"])
         
         def rec_rate(data, factor):
@@ -529,13 +504,15 @@ elif page == "3. Phân Tích Chuyên Sâu":
         recovery_data = rec_rate(df, factor)
         fig, ax = plt.subplots(figsize=(10, 6))
         recovery_data.plot(kind='bar', stacked=True, color=PALETTE[:2], ax=ax)
-        ax.set_title(f"Tỷ Lệ Hồi Phục theo {factor}")
+        for p in ax.patches:
+            width, height = p.get_width(), p.get_height()
+            x, y = p.get_xy() 
+            ax.text(x + width/2, y + height/2, f"{height:.0%}", ha='center', va='center')
+        ax.set_title(f"Tỷ lệ hồi phục theo {factor}")
         ax.set_ylabel("Tỷ lệ")
         ax.legend(title="Hồi Phục", labels=["Không", "Có"])
         plt.xticks(rotation=45, ha="right")
         st.pyplot(fig)
-        st.write("### Tỷ Lệ Hồi Phục:")
-        st.dataframe(recovery_data.style.format("{:.2%}"))
 
     elif analysis_page == "Dung Lượng Phổi Trung Bình Theo Nhóm Tuổi và Loại Bệnh":
         st.subheader("Dung Lượng Phổi Trung Bình Theo Nhóm Tuổi và Loại Bệnh")
