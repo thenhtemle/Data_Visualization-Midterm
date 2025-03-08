@@ -54,6 +54,68 @@ def encode_data(data):
         encoded_data[col] = encoder.fit_transform(data[col].astype(str))
     return encoded_data
 
+# Hàm vẽ đồ thị tỷ lệ phục hồi bệnh
+def plot_recovery_by_disease(df, chart_type='Pie'):
+    # Tính tỷ lệ phần trăm phục hồi theo loại bệnh
+    recovery_rates = df.groupby('Loại Bệnh')['Hồi Phục'].value_counts(normalize=True).unstack() * 100
+    
+    if chart_type == 'Stacked':
+        # Stacked bar chart
+        plt.figure(figsize=(10, 6))
+        recovery_rates.plot(kind='bar', stacked=True, color=['#FF6B6B', '#4ECDC4'])
+        plt.title('Tỷ lệ phục hồi theo loại bệnh', fontsize=14, pad=15)
+        plt.xlabel('Loại bệnh', fontsize=12)
+        plt.ylabel('Tỷ lệ (%)', fontsize=12)
+        plt.legend(title='Hồi phục', loc='center left', bbox_to_anchor=(1.0, 0.5))
+        plt.xticks(rotation=45, ha='right')
+        plt.yticks(ticks=range(0, 101, 10), labels=[f"{i}%" for i in range(0, 101, 10)])
+        plt.tight_layout()
+    else:  # default to pie chart
+        # Pie chart cho từng loại bệnh
+        fig, axes = plt.subplots(2, 3, figsize=(15, 10))  #
+        axes = axes.flatten()  
+        diseases = recovery_rates.index
+        for idx, disease in enumerate(diseases):
+            if idx < len(axes):
+                axes[idx].pie(recovery_rates.loc[disease], labels=recovery_rates.columns,
+                             autopct='%1.1f%%', colors=['#FF6B6B', '#4ECDC4'], startangle=90)
+                axes[idx].set_title(f'{disease}', fontsize=10)
+        for idx in range(len(diseases), len(axes)):
+            axes[idx].axis('off')
+        plt.suptitle('Tỷ lệ phục hồi theo loại bệnh', fontsize=14, y=1.05)
+        plt.tight_layout()
+    
+    return plt
+
+# Hàm tạo biểu đồ ảnh hưởng của hút thuốc (stacked bar chart hoặc pie chart)
+def plot_smoking_impact(df, chart_type='Stacked'):
+    # Tính tỷ lệ phần trăm phục hồi theo tình trạng hút thuốc
+    smoking_impact = df.groupby('Tình Trạng Hút Thuốc')['Hồi Phục'].value_counts(normalize=True).unstack() * 100
+    
+    if chart_type == 'Stacked':
+        # Stacked bar chart
+        plt.figure(figsize=(8, 6))
+        smoking_impact.plot(kind='bar', stacked=True, color=['#FF6B6B', '#4ECDC4'])
+        plt.title('Ảnh hưởng của hút thuốc đến khả năng phục hồi', fontsize=14, pad=15)
+        plt.xlabel('Tình trạng hút thuốc', fontsize=12)
+        plt.ylabel('Tỷ lệ (%)', fontsize=12)
+        plt.legend(title='Phục Hồi', loc='center left', bbox_to_anchor=(1.0, 0.5))
+        plt.xticks(rotation=0)
+        # Chia trục y thành 10 khoảng từ 0% đến 100%
+        plt.yticks(ticks=range(0, 101, 10), labels=[f"{i}%" for i in range(0, 101, 10)])
+        plt.tight_layout()
+        return plt
+    else:  # Pie chart
+        fig, axes = plt.subplots(1, 2, figsize=(12, 6))
+        for idx, smoking_status in enumerate(smoking_impact.index):
+            axes[idx].pie(smoking_impact.loc[smoking_status], labels=smoking_impact.columns,
+                          autopct='%1.1f%%', colors=['#FF6B6B', '#4ECDC4'], startangle=90)
+            axes[idx].set_title(f'Tình trạng: {smoking_status}', fontsize=12)
+        plt.suptitle('Ảnh hưởng của hút thuốc đến khả năng phục hồi', fontsize=14, y=1.05)
+        plt.tight_layout()
+        return plt
+    
+    
 # --- Tải dữ liệu từ người dùng ---
 st.sidebar.header("Tải Dữ Liệu")
 uploaded_file = st.sidebar.file_uploader("Tải lên tệp CSV", type=["csv"])
@@ -179,6 +241,8 @@ elif page == "3. Phân Tích Chuyên Sâu":
         "Tương Quan",
         "Phân Tích Song Biến (Bivariate Analysis)",
         "Tỷ Lệ Hồi Phục",
+        "Tỷ lệ phục hồi theo loại bệnh",
+        "Ảnh hưởng của hút thuốc tới khả năng phục hồi"
     ])
     
     # Thống kê chung
@@ -212,7 +276,19 @@ elif page == "3. Phân Tích Chuyên Sâu":
             - **Tỷ Lệ Hút Thuốc:** {f'{smoking_rate:.2f}%' if not pd.isna(smoking_rate) else 'N/A'}
                 - Phần trăm bệnh nhân hút thuốc, một yếu tố nguy cơ quan trọng đối với bệnh phổi.
             """)
-
+    
+    elif analysis_page == "Ảnh hưởng của hút thuốc tới khả năng phục hồi":
+        st.subheader('Ảnh hưởng của hút thuốc đến khả năng phục hồi')
+        st.write("""
+                    Phân tích này xem xét mối quan hệ giữa tình trạng hút thuốc và khả năng phục hồi.
+                    """)
+        st.sidebar.header('Tùy chỉnh biểu đồ')
+        chart_options_2 = ['Stacked', 'Pie']
+        chart_type_1 = st.sidebar.selectbox('Ảnh hưởng của hút thuốc tới khả năng phục hồi', 
+                                       chart_options_2, index=0)
+        fig2 = plot_smoking_impact(df, chart_type_1)
+        if fig2:
+            st.pyplot(fig2)
     # Phân bố Tuổi & Dung Tích Phổi
     elif analysis_page == "Tuổi & Dung Tích Phổi":
         st.subheader("Phân Bố Tuổi & Dung Tích Phổi")
@@ -353,6 +429,23 @@ elif page == "3. Phân Tích Chuyên Sâu":
                 """)
         else:
             st.write("Không thể thực hiện kiểm định t-test: Một hoặc cả hai nhóm không có dữ liệu.")
+    
+    elif analysis_page == "Tỷ lệ phục hồi theo loại bệnh":
+        st.subheader("Tỷ lệ phần trăm phục hồi theo loại bệnh")
+        # Sidebar để tùy chỉnh
+        st.sidebar.header('Tùy chỉnh biểu đồ')
+        chart_options_1 = ['Stacked', 'Pie']
+        # Tùy chọn cho biểu đồ 
+        chart_type_1 = st.sidebar.selectbox('Chọn loại biểu đồ cho "Tỷ lệ phục hồi theo loại bệnh:', 
+                                       chart_options_1, index=0)
+        st.subheader('Tỷ lệ phục hồi theo loại bệnh')
+        st.write("""
+           Phân tích này giúp chúng ta hiểu loại bệnh nào có khả năng phục hồi cao hơn,
+           từ đó đưa ra chiến lược điều trị phù hợp.
+            """)
+        fig1 = plot_recovery_by_disease(df, chart_type_1)
+        if fig1:
+           st.pyplot(fig1)
 
     # Lượt Khám Bệnh
     elif analysis_page == "Lượt Khám Bệnh":

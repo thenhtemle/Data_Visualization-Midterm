@@ -23,6 +23,8 @@ def load_and_preprocess_data(file_path):
         st.error(f"Lỗi: {e}")
         st.stop()
 
+
+
 # --- Load Data ---
 file_path = "lung_disease_data_preprocessed.csv"
 df = load_and_preprocess_data(file_path)
@@ -133,7 +135,7 @@ elif page == "2. Thống Kê Mô Tả":
 # --- Page 3: In-Depth Analysis ---
 elif page == "3. Phân Tích Chuyên Sâu":
     st.header("3. Phân Tích Chuyên Sâu")
-    analysis_page = st.selectbox("Chọn Phân Tích", ["Thống kê chung", "Tuổi & Dung Tích Phổi", "Loại Bệnh", "Hút Thuốc & Dung Tích Phổi", "Lượt Khám Bệnh", "Tương Quan"])
+    analysis_page = st.selectbox("Chọn Phân Tích", ["Thống kê chung", "Tuổi & Dung Tích Phổi", "Tỷ lệ phần trăm phục hồi theo loại bệnh", "Loại Bệnh", "Hút Thuốc & Dung Tích Phổi", "Lượt Khám Bệnh", "Tương Quan"])
     
     if analysis_page == "Thống kê chung":
         st.subheader("Thống Kê Chung")
@@ -303,7 +305,7 @@ elif page == "3. Phân Tích Chuyên Sâu":
                 """)
       else:
           st.write("Không thể thực hiện kiểm định t-test: Một hoặc cả hai nhóm không có dữ liệu.")
-          
+        
     elif analysis_page == "Lượt Khám Bệnh":
       st.subheader("Lượt Khám Bệnh Trung Bình theo Loại Bệnh")
 
