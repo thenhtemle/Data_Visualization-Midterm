@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
 import sklearn.preprocessing as skp
+import plotly.express as px
 
 # Thiết lập cấu hình trang
 st.set_page_config(page_title="Phân Tích Bệnh Phổi", page_icon="🫁", layout="wide", initial_sidebar_state="expanded")
@@ -171,12 +172,13 @@ elif page == "3. Phân Tích Chuyên Sâu":
     analysis_page = st.selectbox("Chọn Phân Tích", [
         "Thống kê chung", 
         "Tuổi & Dung Tích Phổi", 
+        "Dung Lượng Phổi Trung Bình Theo Nhóm Tuổi và Loại Bệnh",
         "Loại Bệnh", 
         "Hút Thuốc & Dung Tích Phổi", 
         "Lượt Khám Bệnh", 
         "Tương Quan",
         "Phân Tích Song Biến (Bivariate Analysis)",
-        "Tỷ Lệ Hồi Phục"
+        "Tỷ Lệ Hồi Phục",
     ])
     
     # Thống kê chung
@@ -441,6 +443,39 @@ elif page == "3. Phân Tích Chuyên Sâu":
         st.pyplot(fig)
         st.write("### Tỷ Lệ Hồi Phục:")
         st.dataframe(recovery_data.style.format("{:.2%}"))
+
+    elif analysis_page == "Dung Lượng Phổi Trung Bình Theo Nhóm Tuổi và Loại Bệnh":
+        st.subheader("Dung Lượng Phổi Trung Bình Theo Nhóm Tuổi và Loại Bệnh")
+
+        df['Nhóm Tuổi'] = pd.cut(
+                df['Tuổi'], 
+                bins=[0, 20, 40, 60, 80, 100], 
+                labels=['0-20', '21-40', '41-60', '61-80', '81+']
+            )
+            
+        # Tính trung bình dung lượng phổi cho từng nhóm tuổi và loại bệnh
+        lung_capacity_by_age_disease = df.groupby(['Nhóm Tuổi', 'Loại Bệnh'])['Dung Tích Phổi'].mean().unstack()
+        
+        # Tạo heatmap
+        fig_age_lung = px.imshow(
+            lung_capacity_by_age_disease, 
+            title="Dung Lượng Phổi Trung Bình Theo Nhóm Tuổi và Loại Bệnh",
+            labels=dict(x="Loại Bệnh", y="Nhóm Tuổi", color="Dung Lượng Phổi"),
+            color_continuous_scale="YlGnBu"  # Thang màu thân thiện với người mù màu
+        )
+        st.plotly_chart(fig_age_lung, use_container_width=True)
+        
+        # Nhận xét về biểu đồ
+        st.markdown("**Nhận Xét:**")
+        
+        # Phân tích tổng quan
+        overall_analysis = lung_capacity_by_age_disease.apply(lambda x: pd.Series({
+            'Nhóm Tuổi Cao Nhất': x.idxmax(),
+            'Giá Trị Cao Nhất': x.max()
+        }))
+        
+        for disease, analysis in overall_analysis.items():
+            st.markdown(f"- {disease}: Dung lượng phổi cao nhất ở nhóm tuổi {analysis['Nhóm Tuổi Cao Nhất']} với giá trị {analysis['Giá Trị Cao Nhất']:.2f}")
 
 # --- Trang 4: Nhận Xét Chung ---
 elif page == "4. Nhận Xét Chung":
