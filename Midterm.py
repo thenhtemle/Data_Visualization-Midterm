@@ -309,6 +309,37 @@ elif page == "3. Phân Tích Chuyên Sâu":
             mime="application/pdf"
         )
 
+        with st.expander("Xem Nhận Xét Chi Tiết"):
+            st.markdown("""
+            **Biểu đồ Cột Phân Bố Loại Bệnh:**
+            - Thể hiện số lượng bệnh nhân mắc mỗi loại bệnh phổi trong dữ liệu.
+            - **So sánh tần suất:** Loại bệnh nào phổ biến nhất (cột cao nhất) và ít gặp nhất (cột thấp nhất)?
+            - **Chênh lệch:** Đánh giá mức độ chênh lệch giữa các loại bệnh, có thể liên quan đến yếu tố nguy cơ hoặc dịch tễ.
+            - **Lưu ý:** Mỗi bệnh nhân chỉ được ghi nhận một loại bệnh chính trong cột này.
+            
+             **Phân Tích Chi Tiết Biểu Đồ "Phân Bố Loại Bệnh"**
+
+            **1. Viêm Phế Quản Chiếm Ưu Thế:**
+
+            *   **Viêm Phế Quản** có số lượng ca bệnh cao nhất, vượt trội đáng kể so với các loại bệnh phổi khác được liệt kê. Điều này cho thấy Viêm Phế Quản là loại bệnh phổi phổ biến nhất trong nhóm bệnh được khảo sát.
+
+            **2. Bệnh Phổi Tắc Nghẽn Mãn Tính và Hen Suyễn là các bệnh mạn tính phổ biến:**
+
+            *   **Bệnh Phổi Tắc Nghẽn Mãn Tính (COPD)** và **Hen Suyễn** có số lượng ca bệnh gần tương đương và đều ở mức cao, chỉ đứng sau Viêm Phế Quản. Điều này nhấn mạnh rằng đây là hai bệnh phổi mạn tính có ảnh hưởng lớn đến sức khỏe cộng đồng, đòi hỏi sự quan tâm liên tục và các biện pháp quản lý lâu dài.
+
+            **3. Ung Thư Phổi và Viêm Phổi có tỷ lệ mắc thấp hơn nhưng vẫn đáng quan ngại:**
+
+            *   **Ung Thư Phổi** và **Viêm Phổi** có số lượng ca bệnh thấp hơn so với ba bệnh trên. Tuy nhiên, cần lưu ý rằng đây vẫn là những bệnh lý nghiêm trọng. Ung thư phổi là một bệnh đe dọa tính mạng, còn viêm phổi có thể gây ra các biến chứng nặng, đặc biệt ở những đối tượng dễ bị tổn thương. Dù số lượng ca mắc thấp hơn, sự hiện diện của chúng vẫn là một vấn đề y tế đáng kể.
+
+            **4. Sự phân bố không đồng đều giữa các loại bệnh:**
+
+            *   Biểu đồ thể hiện rõ sự khác biệt lớn về số lượng ca bệnh giữa các loại bệnh phổi. Sự chênh lệch này cho thấy sự phân bố không đồng đều của các bệnh phổi trong cộng đồng, có thể do nhiều yếu tố như lối sống, môi trường, cơ địa và khả năng tiếp cận dịch vụ y tế.
+
+            **Tóm lại:** Biểu đồ "Phân Bố Loại Bệnh" cho thấy Viêm Phế Quản là bệnh phổi phổ biến nhất, tiếp theo là COPD và Hen Suyễn, trong khi Ung Thư Phổi và Viêm Phổi có số lượng ca bệnh thấp hơn nhưng vẫn là những vấn đề sức khỏe đáng lưu ý. Sự phân bố này có thể giúp các cơ quan y tế tập trung nguồn lực và xây dựng các chương trình phòng ngừa và điều trị phù hợp cho từng loại bệnh phổi.
+                    **Phân Tích Chi Tiết Biểu Đồ "Ảnh Hưởng của Hút Thuốc lên Dung Tích Phổi" (Biểu đồ Hộp)**
+            """)
+
+    # Hút Thuốc & Dung Tích Phổi
     elif analysis_page == "Hút Thuốc & Dung Tích Phổi":
         st.subheader("Ảnh Hưởng của Hút Thuốc lên Dung Tích Phổi")
         plot_df = df.dropna(subset=["Tình Trạng Hút Thuốc", "Dung Tích Phổi"])
@@ -328,6 +359,41 @@ elif page == "3. Phân Tích Chuyên Sâu":
             file_name="DungTichPhoi_Theo_HutThuoc_Boxplot.pdf",
             mime="application/pdf"
         )
+        
+        with st.expander("Xem Nhận Xét Chi Tiết (Biểu đồ Hộp)"):
+            st.markdown("""
+            **Biểu đồ Hộp (Boxplot):**
+            - So sánh phân bố dung tích phổi giữa người không hút thuốc và người hút thuốc (sau khi loại bỏ giá trị thiếu).
+            - **Trung vị:** Đường kẻ giữa hộp cho thấy dung tích phổi trung bình. Trung vị thấp hơn ở nhóm hút thuốc gợi ý ảnh hưởng tiêu cực.
+            - **IQR:** Độ cao của hộp thể hiện sự phân tán. IQR lớn hơn cho thấy dung tích phổi biến động nhiều hơn.
+            - **Râu:** Độ dài râu cho thấy phạm vi dung tích phổi (không tính ngoại lai).
+            - **Điểm ngoại lai:** Các điểm ngoài râu là giá trị bất thường, có thể đáng chú ý nếu tập trung ở một nhóm.
+            - **Kết luận sơ bộ:** Hút thuốc có thể làm giảm dung tích phổi nếu trung vị của nhóm hút thuốc thấp hơn.
+
+            **Biểu đồ Hộp (Boxplot):**
+            - So sánh phân bố dung tích phổi giữa người không hút thuốc và người hút thuốc (sau khi loại bỏ giá trị thiếu).
+
+            **1. Trung Vị (Median):**
+            - Đường kẻ giữa hộp cho thấy dung tích phổi trung bình của mỗi nhóm.
+            - **Nhận xét:** Trung vị của nhóm "Hút Thuốc" thấp hơn rõ rệt so với nhóm "Không Hút Thuốc". Điều này gợi ý rằng, trung bình, người hút thuốc có dung tích phổi thấp hơn người không hút thuốc.  Sự khác biệt này cho thấy hút thuốc có thể có ảnh hưởng tiêu cực đến dung tích phổi trung bình.
+
+            **2. Khoảng Tứ Phân Vị (IQR):**
+            - Độ cao của hộp (IQR) thể hiện sự phân tán của dữ liệu, tức là mức độ biến động của dung tích phổi trong mỗi nhóm.
+            - **Nhận xét:**  IQR của nhóm "Hút Thuốc" có vẻ hơi lớn hơn hoặc tương đương so với nhóm "Không Hút Thuốc".  Điều này có thể cho thấy dung tích phổi ở người hút thuốc có sự biến động lớn hơn, hoặc tương đương với người không hút thuốc.
+
+            **3. Râu Biểu Đồ (Whiskers):**
+            - Độ dài của râu biểu đồ cho thấy phạm vi dung tích phổi trong mỗi nhóm, không tính các giá trị ngoại lai.
+            - **Nhận xét:** Râu của cả hai nhóm có độ dài tương đương và trải dài từ khoảng 1 lít đến gần 6 lít. Điều này cho thấy phạm vi dung tích phổi có thể khá rộng ở cả người hút thuốc và không hút thuốc, nhưng điểm quan trọng là sự tập trung dữ liệu (thể hiện qua hộp) khác nhau.
+
+            **4. Điểm Ngoại Lai (Outliers):**
+            - Các điểm nằm ngoài râu biểu đồ là giá trị ngoại lai, tức là những giá trị bất thường, có thể đáng chú ý nếu chúng tập trung ở một nhóm cụ thể.
+            - **Nhận xét:** Biểu đồ này không hiển thị rõ các điểm ngoại lai. Tuy nhiên, cần lưu ý rằng nếu có các điểm ngoại lai, đặc biệt là ở nhóm "Hút Thuốc" với dung tích phổi rất thấp, chúng có thể là dấu hiệu của các trường hợp bệnh lý nghiêm trọng liên quan đến hút thuốc.
+
+            **5. Kết Luận Sơ Bộ:**
+            - Dựa trên trung vị thấp hơn ở nhóm "Hút Thuốc", biểu đồ này cung cấp bằng chứng sơ bộ cho thấy **hút thuốc có thể làm giảm dung tích phổi**.  Mặc dù IQR và râu cho thấy sự phân tán và phạm vi tương đương, sự khác biệt về trung vị là dấu hiệu quan trọng nhất cho thấy ảnh hưởng tiêu cực của hút thuốc lên dung tích phổi.
+
+            **Lưu ý:** Để có kết luận chắc chắn hơn, cần xem xét thêm các yếu tố khác như kích thước mẫu, độ tuổi, giới tính và các yếu tố sức khỏe khác của người tham gia nghiên cứu. Tuy nhiên, biểu đồ này cung cấp một cái nhìn trực quan và hữu ích về mối liên hệ tiềm ẩn giữa hút thuốc và dung tích phổi.
+                """)
 
         # Scatter Plot
         fig2, ax2 = plt.subplots(figsize=(8, 6))
@@ -380,6 +446,45 @@ elif page == "3. Phân Tích Chuyên Sâu":
             mime="application/pdf"
         )
 
+        with st.expander("Xem Nhận Xét Chi Tiết"):
+            st.markdown("""
+            **Biểu đồ Nhiệt Tương Quan (Heatmap):**
+
+            **Phân Tích Tương Quan Giữa Các Biến Số:**
+
+            **1. Tương Quan Mạnh (Gần 1.0 hoặc -1.0):**
+
+            *   **Đường chéo chính (Diagonal):**  Các ô nằm trên đường chéo chính có giá trị 1.00 (màu đỏ đậm), thể hiện sự tương quan hoàn hảo của một biến số với chính nó (ví dụ: "Tuổi" tương quan hoàn hảo với "Tuổi"). Điều này là hiển nhiên và không mang nhiều ý nghĩa phân tích.
+
+            **2. Tương Quan Yếu hoặc Không Tương Quan (Gần 0.0 - Màu Trắng):**
+
+            *   Hầu hết các ô ngoài đường chéo chính có màu trắng hoặc màu nhạt, với giá trị hệ số tương quan gần 0.0 (ví dụ: -0.01, 0.01, 0.02, -0.02, -0.00, -0.04).
+            *   **Nhận xét:** Điều này cho thấy rằng **hầu hết các biến số trong tập dữ liệu này không có tương quan tuyến tính mạnh mẽ với nhau**.  Các mối tương quan giữa các cặp biến số như:
+                *   Tuổi và Giới Tính (-0.01)
+                *   Tuổi và Tình Trạng Hút Thuốc (0.01)
+                *   Tuổi và Dung Tích Phổi (0.02)
+                *   Tuổi và Loại Bệnh (0.02)
+                *   Tuổi và Loại Điều Trị (-0.01)
+                *   Tuổi và Số Lượt Khám Bệnh (0.02)
+                *   Tuổi và Hồi Phục (-0.00)
+                *   ... và tương tự cho các biến số khác ...
+                đều rất yếu và gần như không đáng kể về mặt thống kê.
+
+            **3. Không Có Tương Quan Âm Mạnh:**
+
+            *   Không có ô nào trong heatmap có màu xanh lam đậm, và các giá trị âm đều rất gần 0 (ví dụ: -0.01, -0.02, -0.04).
+            *   **Nhận xét:**  Điều này cho thấy **không có mối tương quan nghịch mạnh nào giữa các biến số được xem xét**.  Nói cách khác, sự thay đổi của một biến số không có xu hướng làm giảm mạnh giá trị của một biến số khác trong các cặp được xét.
+
+            **Tóm lại:**
+
+            Biểu đồ heatmap này cho thấy rằng **trong tập dữ liệu được phân tích, không có mối tương quan tuyến tính mạnh mẽ nào giữa các biến số "Tuổi", "Giới Tính", "Tình Trạng Hút Thuốc", "Dung Tích Phổi", "Loại Bệnh", "Loại Điều Trị", "Số Lượt Khám Bệnh" và "Hồi Phục"**.  Các giá trị tương quan đều rất gần 0, cho thấy các biến số này có xu hướng độc lập với nhau hoặc chỉ có mối liên hệ rất yếu.
+
+            **Lưu ý:**
+
+            *   **Tương quan không phải là nhân quả:**  Việc không có tương quan mạnh không có nghĩa là không có mối quan hệ nào giữa các biến số. Có thể có các mối quan hệ phi tuyến tính hoặc các mối quan hệ phức tạp khác mà tương quan tuyến tính không thể phát hiện.
+            *   **Cần xem xét các yếu tố khác:** Để hiểu rõ hơn về mối quan hệ giữa các yếu tố này và bệnh phổi, cần phân tích sâu hơn bằng các phương pháp thống kê khác và xem xét các yếu tố tiềm ẩn khác không được thể hiện trong heatmap này.
+            """)
+    
     elif analysis_page == "Phân Tích Song Biến (Bivariate Analysis)":        
         st.subheader("Phân Tích Song Biến")
         num_col = df.select_dtypes(include=['int64', 'float64']).columns.tolist()
