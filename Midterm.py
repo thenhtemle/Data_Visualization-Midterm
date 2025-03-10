@@ -233,6 +233,10 @@ elif page == "2. Thống Kê Mô Tả":
             file_name=f"PhanBo_{cat_select}.pdf",
             mime="application/pdf"
         )
+        
+        pie_fig = px.pie(df[cat_select].value_counts(), values=cat_select, names=df[cat_select].value_counts().index,
+                         title=f"Phân bố của {cat_select}", color_discrete_sequence=px.colors.qualitative.Set3)
+        st.plotly_chart(pie_fig)
 
 # --- Trang 3: Phân Tích Chuyên Sâu ---
 elif page == "3. Phân Tích Chuyên Sâu":
