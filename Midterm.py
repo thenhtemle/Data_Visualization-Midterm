@@ -234,8 +234,7 @@ elif page == "2. Thống Kê Mô Tả":
             mime="application/pdf"
         )
         
-        pie_fig = px.pie(df[cat_select].value_counts(), values=cat_select, names=df[cat_select].value_counts().index,
-                         title=f"Phân bố của {cat_select}", color_discrete_sequence=px.colors.qualitative.Set3)
+        pie_fig = px.pie(df, names=cat_select, title=f"Phân Bố {cat_select}", hole=0.5, color_discrete_sequence=px.colors.qualitative.Set3)
         st.plotly_chart(pie_fig)
 
 # --- Trang 3: Phân Tích Chuyên Sâu ---
